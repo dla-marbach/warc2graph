@@ -1,0 +1,33 @@
+# Changelog
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+
+## [0.2] – 2021
+### Added
+- This CHANGELOG file.
+- Metadata (and text with removed boilerplate) can now be extracted from each webpage
+- documentation
+
+### Changed
+- Cached python data created by the tests will be ignored by git.
+- If metadata is passed to create_graph, the file name is stored anyway.
+- include_content changed to store_content -> only stores text info
+- Allow choosing subsets of html tags.
+- Basename instead of path is stored in metadata
+- Names of functions and files changed:
+    create_model -> create_graph
+    create_network -> links2graph
+    networks.py -> graphs.py
+
+### Bugfix
+- Custom metadata couldn't be handled due to typo.
+- When extracting url from metatag, return als url-object, not as string.
+- only install webdriver if necessary
+- checking if html is empty before trying to extract metadata
+
+
+## [0.1.1] – 2021-05-07
+Initial release

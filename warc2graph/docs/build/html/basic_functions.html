@@ -1,0 +1,358 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Basic functions &#8212; warc2graph 0.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Tutorial" href="tutorials.html" />
+    <link rel="prev" title="Usage" href="usage.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-warc2graph.__init__">
+<span id="id1"></span><span id="basic-functions"></span><h1>Basic functions<a class="headerlink" href="#module-warc2graph.__init__" title="Permalink to this headline">¶</a></h1>
+<section id="warc2graph">
+<h2>warc2graph<a class="headerlink" href="#warc2graph" title="Permalink to this headline">¶</a></h2>
+<p>Warc2graph extracts a graph data structure from WARC files. The module was built to dig deeper into WARC files.
+It extracts (almost) all internal and external references from a WARC file by analyzing the WARC header and the payload.</p>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<dl class="simple">
+<dt>create_graph(input_data, input_type=”warc”, methods=”all”, merge_results=True, blacklist=None, store_content=True, count_tags=False, collect_metadata=True, metadata=None, tagset=”all”, custom_tagset=None)</dt><dd><p>Creates a networkx.DiGraph (directed graph network) representing archived or live websites.</p>
+</dd>
+<dt>extract_links(input_data, input_type=”warc”, methods=”all”, merge_results=True, blacklist=None, store_content=True, count_tags=False, collect_metadata=True, tagset=”all”, custom_tagset=None)</dt><dd><p>Extracts all links from (archived) website.</p>
+</dd>
+<dt>links2graph(links, metadata=None, node_attributes=None)</dt><dd><p>Creates a networkx DiGraph (directed graph network) from a list of links.</p>
+</dd>
+</dl>
+</section>
+</section>
+<section id="create-graph">
+<h2>create_graph<a class="headerlink" href="#create-graph" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="warc2graph.warc2graph.create_graph">
+<span class="sig-prename descclassname"><span class="pre">warc2graph.warc2graph.</span></span><span class="sig-name descname"><span class="pre">create_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'warc'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">methods</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">merge_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blacklist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_content</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count_tags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collect_metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tagset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_tagset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">networkx.classes.digraph.DiGraph</span></span></span><a class="headerlink" href="#warc2graph.warc2graph.create_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the main function of warc2graph.
+It creates a NetworkX DiGraph representing archived or live websites, modelling the input or a dict with methods as keys and corresponding generated models as NetworkX DiGraph as values.
+A NetworkX DiGraph is a directed graph, that is, a graph with directed edges. See NetworkX documentation for further information, &gt;https://networkx.org/documentation/stable/reference/index.html&lt;.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_data</strong> (<em>str</em><em> or </em><em>list</em>) – <p>The data that is to be modelled. Either:</p>
+<ul>
+<li><p>a path to a local warc file,</p></li>
+<li><p>a url to an online warc file,</p></li>
+<li><p>a path to a list of multiple warc files, or</p></li>
+<li><p>a path to a list of links to the live web</p></li>
+</ul>
+</p></li>
+<li><p><strong>input_type</strong> (<em>{'warc'</em><em>, </em><em>'download'</em><em>, </em><em>'warc_list'</em><em>, </em><em>'live_list'}</em><em>, </em><em>default: 'warc'</em>) – <p>Declares the type of the input explicitly. Either:</p>
+<ul>
+<li><p>’warc’ if input_data is a path to a local warc file</p></li>
+<li><p>’download’ if input_data is an url to an online warc file</p></li>
+<li><dl class="simple">
+<dt>’warc_list’ if input_data is a path to a list of multiple warc files. If you want to create a model using a list of warc files all together archiving one big website, first create a list of all the warc files as txt-file. It should look as follows:</dt><dd><ul>
+<li><p>path/to/warc1.warc.gz</p></li>
+<li><p>path/to/warc2.warc.gz</p></li>
+<li><p>path/to/warc3.warc.gz</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>’live_list’ if input_data is a path to a list of links to the lives. You can also model a website that is not archived. Create a plain text file containing the urls to all the webpages you want to consider. This file should look as follows:</dt><dd><ul>
+<li><p>url/to/webpage1.html</p></li>
+<li><p>url/to/webpage2.html</p></li>
+<li><p>url/to/webpage3.html</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</p></li>
+<li><p><strong>methods</strong> (<em>{'all'</em><em>, </em><em>'wmd'</em><em>, </em><em>'bs4'</em><em>, </em><em>'rep'}</em><em> or </em><em>list</em><em>, </em><em>default: 'all'</em>) – <p>Which method or methods should be used for link extraction? Currently implemented:</p>
+<ul>
+<li><dl class="simple">
+<dt>’wmd’: This method reads out the metadata stored in the WARC file.</dt><dd><p>If input_type is ‘warc’, also set parameter store_content ‘False’.
+If input_type is ‘live_list’ this method is not available.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>’bs4’: This method analysez the HTML data using the python library BeautifulSoup.</dt><dd><p>If input_type is ‘warc’, also set parameter collect_metadata ‘False’.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>’rep’: In order to also evaluate JavaScript the HTML data is processed with the remote controlled headless browser Selenium.</dt><dd><p>If input_type is ‘warc’, Geckodriver will be installed if necessary. If an error message appears that Geckodriver cannot be installed, try installing the correct version of Geckodriver manually. To do this, you should download the current version of Geckodriver and move it to the appropriate file folder. You will have to repeat this procedure every time a new version of Geckodriver is available.</p>
+</dd>
+</dl>
+</li>
+<li><p>’all’: Uses all methods ‘wmd’, ‘bs4’, and ‘rep’.</p></li>
+<li><p>subset: If a list containing a subset of these methods is set, also set parameter merge_results ‘True’.</p></li>
+</ul>
+</p></li>
+<li><p><strong>merge_results</strong> (<em>bool</em><em>, </em><em>default: True</em>) – <p>Whether the results of methods should be merged to one result.</p>
+<ul>
+<li><p>If ‘True’, the results of methods will be merged to one result.</p></li>
+<li><p>If ‘False’, the output will be a dict containing results for different methods.</p></li>
+</ul>
+</p></li>
+<li><p><strong>blacklist</strong> (<em>list</em><em>, </em><em>default: None</em>) – List of domains that will be ignored.</p></li>
+<li><p><strong>store_content</strong> (<em>bool</em><em>, </em><em>default: True</em>) – <p>Whether the html-text should be stored in the model.</p>
+<ul>
+<li><p>If ‘True’, a dict containing this info will be added to the output, so the output will be a tuple.</p></li>
+</ul>
+</p></li>
+<li><p><strong>count_tags</strong> (<em>bool</em><em>, </em><em>default: False</em>) – <p>Whether counts of all tags should be stored in the model.</p>
+<ul>
+<li><p>If ‘True’, all tags on every page will be counted and a dict containing this info will be added to the output, so the output will be a tuple.</p></li>
+</ul>
+</p></li>
+<li><p><strong>collect_metadata</strong> (<em>bool</em><em>, </em><em>default: True</em>) – Whether plaintext (with removed boilerplates), title, date and author should be extracted from each html. See <a class="reference external" href="https://trafilatura.readthedocs.io/en/latest/#further-documentation">Trafilatura</a> for further information.</p></li>
+<li><p><strong>metadata</strong> (<em>dict</em><em>, </em><em>default: None</em>) – Metadata describing the whole website can be added to the model, no specific keys are determined.
+If nothing is given, the name of the (first) warc file or the first url will be stored as filename.</p></li>
+<li><p><strong>tagset</strong> (<em>{'all'</em><em>, </em><em>'a_only'</em><em>, </em><em>'html_only'</em><em>, </em><em>'no_scripts'</em><em>, </em><em>'custom'}</em><em>, </em><em>default: 'all'</em>) – <p>Choose the set of tags you want to use:</p>
+<ul>
+<li><p>’a_only’: Extracts hyperlinks only from the &lt;a&gt; tag. That is [(“a”, “href”)].</p></li>
+<li><p>’html_only’: Extracts hyperlinks that refer only to html-files. That is [(“a”, “href”), (“frame”, “src”), (“iframe”, “src”), (“link”, “href”), (“base”, “href”), (“meta”, “url”), (“area”, “href”), (“form”, “action”), (“button”, “formation”), (“q”, “cite”), (“blockquote”, “cite”)].</p></li>
+<li><p>’no_scripts’: Extracts all hyperlinks except the &lt;script&gt; tag. That is [(“a”, “href”), (“frame”, “src”), (“iframe”, “src”), (“link”, “href”), (“base”, “href”), (“object”, “data”), (“img”, “src”), (“applet”, “object”), (“embed”, “src”), (“meta”, “url”), (“meta”, “content”), (“audio”, “src”), (“video”, “src”), (“area”, “href”), (“form”, “action”), (“button”, “formation”), (“q”, “cite”), (“blockquote”, “cite”)].</p></li>
+<li><p>’all’: Extracts all hyperlinks. That is [(“a”, “href”), (“frame”, “src”), (“iframe”, “src”), (“link”, “href”), (“base”, “href”), (“object”, “data”), (“img”, “src”), (“applet”, “object”), (“embed”, “src”), (“meta”, “url”), (“meta”, “content”), (“audio”, “src”), (“video”, “src”), (“script”, “src”), (“area”, “href”), (“form”, “action”), (“button”, “formation”), (“q”, “cite”), (“blockquote”, “cite”)].</p></li>
+<li><p>’custom’: Give any HTML tag you want to extract the links from. If this is chosen, also set parameter ‘custom_tagset’.</p></li>
+</ul>
+</p></li>
+<li><p><strong>custom_tagset</strong> (<em>list</em><em>, </em><em>default: None</em>) – If tagset is set to ‘custom’, give a list of tuples containing the tag and the attribute you want to extract the links from.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>If merge_results is ‘True’ or results are only generated using one method, a NetworkX DiGraph modelling the input is returned.
+If merge_results is ‘False’ it returns a dict with methods as keys and corresponding generated models as NetworkX DiGraph as values.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>networkx.DiGraph or dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="extract-links">
+<h2>extract_links<a class="headerlink" href="#extract-links" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="warc2graph.linkextraction.extract_links">
+<span class="sig-prename descclassname"><span class="pre">warc2graph.linkextraction.</span></span><span class="sig-name descname"><span class="pre">extract_links</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'warc'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">methods</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">merge_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blacklist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_content</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count_tags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collect_metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tagset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_tagset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#warc2graph.linkextraction.extract_links" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to extract links from (archived) website.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_data</strong> (<em>str</em><em> or </em><em>list</em>) – <p>The data that is to be modelled. Either:</p>
+<ul>
+<li><p>a path to a warc file,</p></li>
+<li><p>a url to an online warc file,</p></li>
+<li><p>a path to a list of multiple warc files, or</p></li>
+<li><p>a path to a list of links to the live web</p></li>
+</ul>
+</p></li>
+<li><p><strong>input_type</strong> (<em>{'warc'</em><em>, </em><em>'download'</em><em>, </em><em>'warc_list'</em><em>, </em><em>'live_list'}</em><em>, </em><em>default: 'warc'</em>) – <p>Declares the type of the input explicitly. Either:</p>
+<ul>
+<li><p>’warc’: if input_data is a path to a local warc file</p></li>
+<li><p>’download’: if input_data is an url to an online warc file</p></li>
+<li><p>’warc_list’: if input_data is a path to a list of multiple warc files</p></li>
+<li><p>’live_list’: if input_data is a path to a list of links to the lives</p></li>
+</ul>
+</p></li>
+<li><p><strong>methods</strong> (<em>{'all'</em><em>, </em><em>'wmd'</em><em>, </em><em>'bs4'</em><em>, </em><em>'rep'}</em><em> or </em><em>list</em><em>, </em><em>default: 'all'</em>) – <p>Which method or methods should be used for link extraction? Currently implemented:</p>
+<ul>
+<li><dl class="simple">
+<dt>’wmd’: This method reads out the metadata stored in the WARC file.</dt><dd><p>If input_type is ‘warc’, also set parameter store_content ‘False’.
+If input_type is ‘live_list’ this method is not available.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>’bs4’: This method analysez the HTML data using the python library BeautifulSoup.</dt><dd><p>If input_type is ‘warc’, also set parameter collect_metadata ‘False’.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>’rep’: In order to also evaluate JavaScript the HTML data is processed with the remote controlled headless browser Selenium.</dt><dd><p>If input_type is ‘warc’, Geckodriver will be installed if necessary. If an error message appears that Geckodriver cannot be installed, try installing the correct version of Geckodriver manually. To do this, you should download the current version of Geckodriver and move it to the appropriate file folder. You will have to repeat this procedure every time a new version of Geckodriver is available.</p>
+</dd>
+</dl>
+</li>
+<li><p>’all’: Uses all methods ‘wmd’, ‘bs4’, and ‘rep’.</p></li>
+<li><p>subset: If a list containing a subset of these methods is set, also set parameter merge_results ‘True’.</p></li>
+</ul>
+</p></li>
+<li><p><strong>merge_results</strong> (<em>bool</em><em>, </em><em>default: True</em>) – <p>Whether the results of methods should be merged to one result.</p>
+<ul>
+<li><p>If ‘True’, the results of methods will be merged to one result or be output as a dict containing results for different methods.</p></li>
+<li><p>’False’, if only one method is selected, this will be ignored.</p></li>
+</ul>
+</p></li>
+<li><p><strong>blacklist</strong> (<em>list</em><em>, </em><em>default: None</em>) – List of domains that will be ignored.</p></li>
+<li><p><strong>store_content</strong> (<em>bool</em><em>, </em><em>default: True</em>) – <p>Whether the html-text should be stored in the model.</p>
+<ul>
+<li><p>If ‘True’, a dict containing this info will be added to the output, so the output will be a tuple.</p></li>
+</ul>
+</p></li>
+<li><p><strong>count_tags</strong> (<em>bool</em><em>, </em><em>default: False</em>) – <p>Whether counts of all tags should be stored in the model.</p>
+<ul>
+<li><p>If ‘True’, all tags on every page will be counted and a dict containing this info will be added to the output, so the output will be a tuple.</p></li>
+</ul>
+</p></li>
+<li><p><strong>collect_metadata</strong> (<em>bool</em><em>, </em><em>default: True</em>) – <p>Extract plaintext (with removed boilerplates), title, date and author from each html. See <a class="reference external" href="https://trafilatura.readthedocs.io/en/latest/#further-documentation">Trafilatura</a> for further information.</p>
+</p></li>
+<li><p><strong>tagset</strong> (<em>{'all'</em><em>, </em><em>'a_only'</em><em>, </em><em>'html_only'</em><em>, </em><em>'no_scripts'</em><em>, </em><em>'custom'}</em><em>, </em><em>default: 'all'</em>) – <p>Choose the set of tags you want to use:</p>
+<ul>
+<li><p>’a_only’: Extracts hyperlinks only from the &lt;a&gt; tag. That is [(“a”, “href”)].</p></li>
+<li><p>’html_only’: Extracts hyperlinks that refer only to html-files. That is [(“a”, “href”), (“frame”, “src”), (“iframe”, “src”), (“link”, “href”), (“base”, “href”), (“meta”, “url”), (“area”, “href”), (“form”, “action”), (“button”, “formation”), (“q”, “cite”), (“blockquote”, “cite”)].</p></li>
+<li><p>’no_scripts’: Extracts all hyperlinks except the &lt;script&gt; tag. That is [(“a”, “href”), (“frame”, “src”), (“iframe”, “src”), (“link”, “href”), (“base”, “href”), (“object”, “data”), (“img”, “src”), (“applet”, “object”), (“embed”, “src”), (“meta”, “url”), (“meta”, “content”), (“audio”, “src”), (“video”, “src”), (“area”, “href”), (“form”, “action”), (“button”, “formation”), (“q”, “cite”), (“blockquote”, “cite”)].</p></li>
+<li><p>’all’: Extracts all hyperlinks. That is [(“a”, “href”), (“frame”, “src”), (“iframe”, “src”), (“link”, “href”), (“base”, “href”), (“object”, “data”), (“img”, “src”), (“applet”, “object”), (“embed”, “src”), (“meta”, “url”), (“meta”, “content”), (“audio”, “src”), (“video”, “src”), (“script”, “src”), (“area”, “href”), (“form”, “action”), (“button”, “formation”), (“q”, “cite”), (“blockquote”, “cite”)].</p></li>
+<li><p>’custom’: Give any HTML tag you want to extract the links from. If this is chosen, also set parameter ‘custom_tagset’.</p></li>
+</ul>
+</p></li>
+<li><p><strong>custom_tagset</strong> (<em>list</em><em>, </em><em>default: None</em>) – If tagset is set to ‘custom’, give a list of tuples containing the tag and the attribute you want to extract the links from.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The output consists of the links and a dict containing content if store_content is set ‘True’ and/or counts of all tags if count_tags is set ‘True’.
+In the case of both said flags are set ‘False’, this will be a empty dict.
+If merge_results is ‘True’ or results are only generated using one method, the links will be structured as a list of tuples including two urls and some data describing the link.
+Otherwise it is structured as a dict with methods as keys and corresponding lists of tuples as values.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="links2graph">
+<h2>links2graph<a class="headerlink" href="#links2graph" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="warc2graph.graphs.links2graph">
+<span class="sig-prename descclassname"><span class="pre">warc2graph.graphs.</span></span><span class="sig-name descname"><span class="pre">links2graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">links</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">networkx.classes.digraph.DiGraph</span></span></span><a class="headerlink" href="#warc2graph.graphs.links2graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates NetworkX DiGraph (directed graph network) from list of links.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>links</strong> (<em>list</em>) – List of tuples, that contain two urls, the type of the link and possibly contents (depending on include_content).</p></li>
+<li><p><strong>metadata</strong> (<em>dict</em><em>, </em><em>default: None</em>) – Metadata of the object. These will be implemented as attributes of the graph.</p></li>
+<li><p><strong>node_attributes</strong> (<em>dict</em><em>, </em><em>default: None</em>) – Dict containing attributes, that shall be added to the nodes. Must be a in the shape of {node:{attribute_key: attribute_value}}.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A NetworkX DiGraph (directed graph network) modelling the input is returned.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>NetworkX DiGraph</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">warc2graph</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Basic functions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#warc2graph">warc2graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#create-graph">create_graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#extract-links">extract_links</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#links2graph">links2graph</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="get_in_touch.html">Get in touch</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="usage.html" title="previous chapter">Usage</a></li>
+      <li>Next: <a href="tutorials.html" title="next chapter">Tutorial</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Pascal Hein, Mona Ulrich, Claus-Michael Schlesinger, André Blessing, Evelyne Dinulescu-Roth.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/basic_functions.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
