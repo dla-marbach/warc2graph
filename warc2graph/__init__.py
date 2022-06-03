@@ -23,17 +23,14 @@ It extracts (almost) all internal and external references from a WARC file by an
 
 Functions
 ---------
-create_model(input_data, input_type="warc", methods="all", merge_results=True, blacklist=None,
-             base_object="resource", include_content=False, count_tags=False, metadata=None)
-    Creates a graph network based model of a website.
+create_graph(input_data, input_type="warc", methods="all", merge_results=True, blacklist=None, store_content=True, count_tags=False, collect_metadata=True, metadata=None, tagset="all", custom_tagset=None)
+    Creates a networkx.DiGraph (directed graph network) representing archived or live websites.
 
-extract_links(input_data, input_type="warc", methods="all", merge_results=True, blacklist=None,
-              include_content=False, count_tags=False)
-    Extract all the connections between resources in a warc file.
+extract_links(input_data, input_type="warc", methods="all", merge_results=True, blacklist=None, store_content=True, count_tags=False, collect_metadata=True, tagset="all", custom_tagset=None)
+    Extracts all links from (archived) website.
 
-create_network(links, metadata=None, base_object="resource", node_attributes=None)
-    Create a networkx DiGraph from a list of links.
-
+links2graph(links, metadata=None, node_attributes=None)
+    Creates a networkx DiGraph (directed graph network) from a list of links.
 """
 
 import pkg_resources  # part of setuptools
@@ -41,6 +38,6 @@ __version__ = pkg_resources.require("warc2graph")[0].version
 
 
 # make most important functions available in general scope
-from warc2graph.warc2graph import create_model
+from warc2graph.warc2graph import create_graph
 from warc2graph.linkextraction import extract_links
-from warc2graph.networks import create_network
+from warc2graph.graphs import links2graph

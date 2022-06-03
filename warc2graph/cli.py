@@ -16,7 +16,6 @@
 from warc2graph import warc2graph
 
 import networkx as nx
-from itertools import permutations
 import matplotlib.pyplot as plt
 
 import sys
@@ -26,8 +25,7 @@ import json
 
 
 # ====================================================
-desc = "Creates graph network based models of websites. It was built to analyze the narrative structure of\
-net-literature from the 90s and 00s."
+desc = "Creates network graph representing archived or live websites."
 parser = ArgumentParser(description=desc)
 parser.add_argument("data_path", type=str, metavar="DATA-PATH",
                     help="path to a warc file or to a text file containing one url in each row")
@@ -40,26 +38,15 @@ parser.add_argument("-o", "--output-path", type=str, metavar="OUTPUT-PATH",
 parser.add_argument("-k", "--blacklist", type=str,
                     help="path to a file containing one blacklisted domain in each row",
                     default=None)
-parser.add_argument("-c", "--include-content", action="store_const", const=True, default=False,
-                    help="include text and other media to model")
-method_choices = ["".join(p) for r in range(1, 4) for p in permutations(["w", "b", "r"], r)] + ["a"]
-parser.add_argument("-m", "--methods", type=str, choices=method_choices,
-                    metavar="METHOD",
-                    help="methods to be used to extract links, 'w' for metadata from warc file, 'b' for parsed html, \
-                    'r' for replay using selenium browser; if two methods are wanted give both letters, \
-                    for all methods 'a', if 'r' is selected, Geckodriver will be installed if necessary",
-                    default="a")
+parser.add_argument("-c", "--store-content", action="store_const", const=True, default=False,
+                    help="include html content")
+parser.add_argument("-m", "--collect_metadata", action="store_const", const=True, default=False,
+                    help="extract meta data and extracted text from html")
 parser.add_argument("-V", "--create-visualisation", action="store_const", const=True, default=False,
                     help="create and store a visualisation for the created network")
-parser.add_argument("-d", "--dont-merge-results", action="store_const", const=True, default=False,
-                    help="if passed, an output file for each method will be created instead of the results being\
-                     merged")
-parser.add_argument("-b", "--base-object", type=str, choices=["r", "p", "m"],
-                    help="object to be taken as base for model – What should be represented by a node? \
-                     'r' for resource, 'p' for webpage and 'm' for moment during inspection", default="r")
 parser.add_argument("-v", "--verbose", action="store_const", const=True, default=False,
                     help="be verbose about what is going on")
-parser.add_argument("--version", action="version", version="%(prog)s "+ __import__("warc2graph").__version__)
+parser.add_argument("--version", action="version", version="%(prog)s " + __import__("warc2graph").__version__)
 
 args = parser.parse_args()
 
@@ -89,29 +76,11 @@ def main():
     else:
         input_data = args.data_path
 
-    methods = []
-    for m in args.methods:
-        if m == "a":
-            methods = "all"
-        elif m == "w":
-            methods.append("wmd")
-        elif m == "b":
-            methods.append("bs4")
-        elif m == "r":
-            methods.append("rep")
-
     if args.blacklist is None:
         blacklist = None
     else:
         with open(args.blacklist) as blacklist_file:
             blacklist = [b.rstrip() for b in blacklist_file]
-
-    if args.base_object == "r":
-        base_object = "resource"
-    elif args.base_object == "p":
-        base_object = "page"
-    else:
-        base_object = "moment"
 
     # ====================================================
     # call principal function
@@ -120,17 +89,14 @@ def main():
             stdout = sys.stdout
             sys.stdout = out
             try:
-                model = warc2graph.create_model(input_data=input_data, input_type=data_type,
-                                                methods=methods, merge_results=not args.dont_merge_results,
-                                                blacklist=blacklist, base_object=base_object,
-                                                include_content=args.include_content)
+                model = warc2graph.create_graph(input_data=input_data, input_type=data_type, blacklist=blacklist,
+                                                store_content=args.store_content,
+                                                collect_metadata=args.collect_metadata)
             finally:
                 sys.stdout = stdout
     else:
-        model = warc2graph.create_model(input_data=input_data, input_type=data_type,
-                                        methods=methods, merge_results=not args.dont_merge_results,
-                                        blacklist=blacklist, base_object=base_object,
-                                        include_content=args.include_content)
+        model = warc2graph.create_graph(input_data=input_data, input_type=data_type, blacklist=blacklist,
+                                        store_content=args.include_content, collect_metadata=args.collect_metadata)
 
     # write output to file
     if args.output_path != ".":
@@ -138,36 +104,33 @@ def main():
         if not os.path.exists(directory):
             os.makedirs(directory)
 
-    if not args.dont_merge_results:
-        model = {"all": model}
+    timestamp = model.graph["graph_metadata"]["timestamp"]
+    gexf_path = os.path.join(args.output_path, f"{timestamp}_graph.gexf")
+    meta_path = os.path.join(args.output_path, f"{timestamp}_metadata.json")
+    visu_path = os.path.join(args.output_path, f"{timestamp}_visualisation.pdf")
 
-    for method, method_model in model.items():
-        timestamp = method_model.graph["graph_metadata"]["timestamp"]
-        methodstamp = "_" + method if method != "all" else ""
-        gexf_path = os.path.join(args.output_path, f"{timestamp}_graph{methodstamp}.gexf")
-        meta_path = os.path.join(args.output_path, f"{timestamp}_metadata{methodstamp}.json")
-        visu_path = os.path.join(args.output_path, f"{timestamp}_visualisation{methodstamp}.pdf")
+    with open(gexf_path, "wb") as out_path:
+        nx.readwrite.gexf.write_gexf(model, out_path)
 
-        with open(gexf_path, "wb") as out_path:
-            nx.readwrite.gexf.write_gexf(method_model, out_path)
+    with open(meta_path, "w") as out_path:
+        json.dump(dict(model.graph), out_path, indent=4)
 
-        with open(meta_path, "w") as out_path:
-            json.dump(dict(method_model.graph), out_path, indent=4)
+    if args.create_visualisation:
+        shallow_model = nx.DiGraph()
+        shallow_model.add_edges_from(model.edges)
+        fig, ax = plt.subplots(1, figsize=(8, 4))
+        try:
+            pos = nx.drawing.nx_agraph.graphviz_layout(shallow_model, prog="dot")
+        except ImportError:
+            errormsg = """You don't have graphviz installed or graphviz is not available in your path.
+            Consider https://pygraphviz.github.io/documentation/stable/install.html for install instructions.
+            For now, spring layout will be used.
+            """
+            print(errormsg, file=sys.stderr)
+            pos = nx.drawing.layout.spring_layout(shallow_model)
 
-        if args.create_visualisation:
-            fig, ax = plt.subplots(1, figsize=(8, 4))
-            try:
-                pos = nx.drawing.nx_agraph.graphviz_layout(method_model, prog="dot")
-            except ImportError:
-                errormsg = """You don't have graphviz installed or graphviz is not available in your path.
-                Consider https://pygraphviz.github.io/documentation/stable/install.html for install instructions.
-                For now, circular layout will be used.
-                """
-                print(errormsg, file=sys.stderr)
-                pos = nx.drawing.layout.spring_layout(method_model)
-
-            nx.draw_networkx(method_model, with_labels=False, pos=pos, ax=ax)
-            fig.savefig(visu_path, dpi=300)
+        nx.draw_networkx(model, with_labels=False, pos=pos, ax=ax)
+        fig.savefig(visu_path, dpi=300)
 
 
 # ====================================================

@@ -8,7 +8,9 @@ Warc2graph is under active development.
 
 If you consider using warc2graph for a research project or in an archival context, please get in touch! We'd love to hear about your work. 
 
-
+Warc2graph has been presented at the Electronic Literature Organization Conference 2020: \
+| Overview and Video: <https://elmcip.net/critical-writing/networks-net-literature-modelling-extracting-and-visualizing-link-based-networks>
+| Conference Paper (PDF): <https://elmcip.net/sites/default/files/media/critical_writing/attachments/claus-michael_schlesinger_mona_ulrich_pascal_hein_and_andre_blessing_networks_of_net_literature_-_modelling_extracting_and_visualizing_192.pdf>
 
 ## Installation
 
@@ -28,9 +30,6 @@ cd warc2graph
 python3 setup.py build
 python3 setup.py install --user
 ```
-
-To be able to use the selenium based method, you also have to have mozilla's
-[geckodriver](https://github.com/mozilla/geckodriver) installed.
 
 To be able to use the dot algorithm to visualize the graph, make sure, to have [GraphViz](https://graphviz.org/) installed.
 
@@ -105,7 +104,8 @@ You can inspect the `examples.ipynb` using [jupyter notebook](https://jupyter.or
 Our package relies heavily on the [networkx](https://networkx.org/) package. Read its documentation for further
 information about the possibilities and interfaces for the analysis of networkx graphs. 
 
-#### Creating and plotting a model 
+#### Creating and plotting a model
+
 ```python
 import warc2graph  # our package
 import matplotlib.pyplot as plt  # plot graphs
@@ -115,7 +115,7 @@ import networkx as nx  # handle graphs
 warc_path = "tests/WEB-20210202165627638-00000-24143~clarin02~8443.warc.gz"
 
 # create a basic model with all resources as nodes and all links and embeddings as edges
-basic_model = warc2graph.create_model(warc_path)
+basic_model = warc2graph.create_graph(warc_path)
 
 # visualizing the graph using the graphviz "dot" algorithm
 fig, ax = plt.subplots(1, figsize=(8, 4))
@@ -127,14 +127,16 @@ plt.draw()
 ![Visualized Graph](example.png "Visualized Graph")
 
 #### Calculating different graph metrics
+
 ```python
 import warc2graph  # our package
 import networkx as nx  # handle graphs
 from pprint import PrettyPrinter  # print dicts nicely
+
 pp = PrettyPrinter()
 
 warc_path = "tests/WEB-20210202165627638-00000-24143~clarin02~8443.warc.gz"
-basic_model = warc2graph.create_model(warc_path)
+basic_model = warc2graph.create_graph(warc_path)
 degree_centralities = nx.algorithms.centrality.degree_centrality(basic_model)
 
 pp.pprint(degree_centralities)
@@ -167,7 +169,7 @@ import warc2graph  # our package
 warc_path = "tests/WEB-20210202165627638-00000-24143~clarin02~8443.warc.gz"
 
 # create an enriched model, structured like the basic model but containing the html content and counts of all tags
-enriched_model = warc2graph.create_model(warc_path, include_content=True, count_tags=True)
+enriched_model = warc2graph.create_graph(warc_path, include_content=True, count_tags=True)
 
 index_node = "https://clarin09.ims.uni-stuttgart.de/sdc_warc/index.html"
 print(enriched_model.nodes[index_node]["counted_tags"])
@@ -246,3 +248,4 @@ warc2graph makes heavy and critical use of following open source libraries:
 * [Setuptools](https://setuptools.readthedocs.io/en/latest/)
 * [Warcio](https://github.com/webrecorder/warcio)
 * [webdriver-manager](https://github.com/SergeyPirogov/webdriver_manager)
+* [trafilatura](https://trafilatura.readthedocs.io/en/latest/)

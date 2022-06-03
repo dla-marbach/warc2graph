@@ -5,3 +5,5 @@ selenium == 3.141.0
 setuptools == 54.0.0
 warcio == 1.7.4
 webdriver-manager == 3.3.0
+trafilatura == 1.0.0
+lxml == 4.6.3
